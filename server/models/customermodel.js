@@ -5,7 +5,9 @@ var schema = new mongoose.Schema({
     lastName : {type : String, required:true, },
     email : {type : String, required:true, unique:true },
     address : {type : String, required:true},
-    contact : { type :String, required:true, unique:true}
+    contact : { type :String, required:true, unique:true},
+    createdOn: {type: Date, default: Date.now}
+
 })
 
 const CustomerTable = mongoose.model('CustomerTable', schema)
