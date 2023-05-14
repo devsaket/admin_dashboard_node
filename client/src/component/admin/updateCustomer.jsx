@@ -17,23 +17,23 @@ export default function UpdateCustomer(props) {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const getCustomerIdObject = async (id) => {
-        const response = await fetch(`http://localhost:5000/api/customers/${id}`, { mode: 'cors' }).then(
+        const response = await fetch(`http://localhost:5000/api/customers?id=${id}`, { mode: 'cors' }).then(
             (response) => response.json()
         )
         setFormValues(response)
+        console.log("Data = ", response)
     }
 
     const submit = () => {
         console.log(formValues);
 
-        Axios.post("http://localhost:5000/api/customers", formValues).then(()=>{
+        Axios.put("http://localhost:5000/api/customers/"+ props.idobj, formValues).then(()=>{
             alert('Customer Updated Successfully!');
             props.onHide(true)
             window.location.reload(false);
         }).catch(()=>{
             alert('Something Went Wrong!');
         })
-
     };
 
     //input change handler
