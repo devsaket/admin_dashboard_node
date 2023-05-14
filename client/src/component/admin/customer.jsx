@@ -7,6 +7,7 @@ import {FaUserEdit} from 'react-icons/fa'
 import {getFormattedDate} from '../../CustomFunctions'
 import Adminnavbar from './adminnavbar'
 import AddNewCustomer from './addNewCustomer'
+import UpdateCustomer from './updateCustomer'
 
 // import { customerObject } from '../dataset'
 
@@ -87,8 +88,10 @@ const Customer = () => {
                                                             <td>{i.address}</td>
                                                             <td>{getFormattedDate(i.createdOn)}</td>
                                                             <td>
-                                                                <Link to="" className='ms-2'><FaUserEdit /></Link>
-                                                                <Link to="" className='ms-2'><BsTrash3Fill /></Link>
+                                                                <Button  onClick={() => setModalShow(true)} className='ms-1'><FaUserEdit /></Button>
+                                                                <UpdateCustomer show={modalShow} onHide={() => setModalShow(false)} idobj={i._id} />
+
+                                                                <Button  onClick={() => setModalShow(true)} className='ms-1'><BsTrash3Fill /></Button>
                                                             </td>
                                                         </tr>
                                                     </>

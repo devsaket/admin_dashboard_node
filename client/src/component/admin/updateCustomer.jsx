@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { Button, Modal, Form } from 'react-bootstrap';
 // import { useForm } from 'react-hook-form'
-import { ToastContainer } from 'react-toastify';
-import {showToastMessage} from '../../CustomFunctions'
 
 import Axios from 'axios'
 
-export default function AddNewCustomer(props) {
+export default function UpdateCustomer(props) {
     // const { register, formState: { errors }, handleSubmit } = useForm();
     // const onSubmit = data => console.log(data);
 
@@ -14,16 +12,22 @@ export default function AddNewCustomer(props) {
     // Using Formik & Yup
 
     const intialValues = { firstName:"", lastName:"", email: "", contact: "", address:"" };
-
     const [formValues, setFormValues] = useState(intialValues);
     const [formErrors, setFormErrors] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const getCustomerIdObject = async (id) => {
+        const response = await fetch(`http://localhost:5000/api/customers/${id}`, { mode: 'cors' }).then(
+            (response) => response.json()
+        )
+        setFormValues(response)
+    }
 
     const submit = () => {
         console.log(formValues);
 
         Axios.post("http://localhost:5000/api/customers", formValues).then(()=>{
-            alert('Customer Added Successfully!');
+            alert('Customer Updated Successfully!');
             props.onHide(true)
             window.location.reload(false);
         }).catch(()=>{
@@ -95,6 +99,8 @@ export default function AddNewCustomer(props) {
     };
 
     useEffect(() => {
+        getCustomerIdObject(props.idobj)
+
         if (Object.keys(formErrors).length === 0 && isSubmitting) {
             submit();
         }
@@ -151,7 +157,7 @@ export default function AddNewCustomer(props) {
         <Modal {...props} size="lg" aria-labelledby="addNewCustomer" centered >
             <Modal.Header closeButton>
                 <Modal.Title id="addNewCustomer">
-                    Add New Customer
+                    Update Customer
                 </Modal.Title>
             </Modal.Header>
             {Object.keys(formErrors).length === 0 && isSubmitting && (

@@ -2,6 +2,7 @@ import React from "react";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle';
+import 'react-toastify/dist/ReactToastify.css';
 import './assets/style/style.scss';
 // import Index from "./component/index.jsx";
 // import Login from "./component/login/login";

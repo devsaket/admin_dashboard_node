@@ -1,3 +1,5 @@
+import { toast } from 'react-toastify';
+
 export function getFormattedDate(date){
     let d = new Date(date)
 
@@ -15,3 +17,11 @@ export function getFormattedDate(date){
     return d1+'/'+ m1 + "/"+ y1
 }
 
+
+
+// React Toastify
+export const showToastMessage = (msg) => {
+    toast.success(msg, {
+        position: toast.POSITION.TOP_RIGHT
+    });
+};
