@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react'
 import { Button, Modal, Form } from 'react-bootstrap';
-// import { useForm } from 'react-hook-form'
-
 import Axios from 'axios'
+import Adminnavbar from './adminnavbar';
+import { useNavigate, useParams } from 'react-router-dom';
+import {ToastContainer, toast } from 'react-toastify';
 
 export default function UpdateCustomer(props) {
-    // const { register, formState: { errors }, handleSubmit } = useForm();
-    // const onSubmit = data => console.log(data);
-
+    const { customerId } = useParams();
+    let navigate = useNavigate();
 
     // Using Formik & Yup
 
-    const intialValues = { firstName:"", lastName:"", email: "", contact: "", address:"" };
+    const intialValues = { firstName: "", lastName: "", email: "", contact: "", address: "" };
     const [formValues, setFormValues] = useState(intialValues);
     const [formErrors, setFormErrors] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -21,17 +21,15 @@ export default function UpdateCustomer(props) {
             (response) => response.json()
         )
         setFormValues(response)
-        console.log("Data = ", response)
     }
 
     const submit = () => {
-        console.log(formValues);
+        // console.log(formValues);
 
-        Axios.put("http://localhost:5000/api/customers/"+ props.idobj, formValues).then(()=>{
-            alert('Customer Updated Successfully!');
-            props.onHide(true)
-            window.location.reload(false);
-        }).catch(()=>{
+        Axios.put("http://localhost:5000/api/customers/" + customerId , formValues).then(() => {
+            toast('Customer Updated Successfully!');
+            navigate('/admin/customer')
+        }).catch(() => {
             alert('Something Went Wrong!');
         })
     };
@@ -56,14 +54,14 @@ export default function UpdateCustomer(props) {
         const firstNameRegex = /^(?=.{1,50}$)[a-z]+(?:['_.\s][a-z]+)*$/i
         const lastNameRegex = /^(?=.{1,50}$)[a-z]+(?:['_.\s][a-z]+)*$/i
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
-        const contactRegex =  /^[0]?[6789]\d{9}$/
+        const contactRegex = /^[0]?[6789]\d{9}$/
         const addressRegex = /^[a-zA-Z0-9\s,.'-]{3,}$/i
 
         if (!values.firstName) {
             errors.firstName = "First Name cannot be blank";
         } else if (values.firstName.length < 1) {
             errors.firstName = "First Name must be more than 1 character";
-        }else if (!firstNameRegex.test(values.firstName)) {
+        } else if (!firstNameRegex.test(values.firstName)) {
             errors.email = "Invalid First Name format";
         }
 
@@ -71,7 +69,7 @@ export default function UpdateCustomer(props) {
             errors.lastName = "Last Name cannot be blank";
         } else if (values.lastName.length < 1) {
             errors.lastName = "Last Name must be more than 1 character";
-        }else if (!lastNameRegex.test(values.lastName)) {
+        } else if (!lastNameRegex.test(values.lastName)) {
             errors.email = "Invalid Last Name format";
         }
 
@@ -85,8 +83,8 @@ export default function UpdateCustomer(props) {
             errors.contact = "Contact No. cannot be blank";
         } else if (values.contact.length < 10) {
             errors.contact = "Contact No. must be of 10 characters";
-        }else if (!contactRegex.test(values.contact)) {
-            errors.email = "Invalid Contact No. format";
+        } else if (!contactRegex.test(values.contact)) {
+            errors.contact = "Invalid Contact No. format";
         }
 
         if (!values.address) {
@@ -99,7 +97,7 @@ export default function UpdateCustomer(props) {
     };
 
     useEffect(() => {
-        getCustomerIdObject(props.idobj)
+        getCustomerIdObject(customerId)
 
         if (Object.keys(formErrors).length === 0 && isSubmitting) {
             submit();
@@ -108,98 +106,60 @@ export default function UpdateCustomer(props) {
 
     return (
         <>
-        {/* <Modal {...props} size="lg" aria-labelledby="addNewCustomer" centered >
-            <Modal.Header closeButton>
-                <Modal.Title id="addNewCustomer">
-                    Add New Customer
-                </Modal.Title>
-            </Modal.Header>
-            {Object.keys(formErrors).length === 0 && isSubmitting && (
-                <span className="success-msg">Form submitted successfully</span>
-            )}
-            <Form onSubmit={handleSubmit(onSubmit)} noValidate>
-                <Modal.Body>
-                    <input className='fs-5 ' type="text" placeholder="FirstName" {...register("firstName", { required: true, maxLength: 20 })} aria-invalid={errors.firstName ? "true" : "false"} />
-                    {errors.firstName?.type === 'required' && <p role="alert">First name is required</p>}
-                    <br />
+            <div className="container-fluid">
+                <div className="row">
+                    <div className="col-md-3 col-lg-2 d-block bg-dark sidebar">
+                        <Adminnavbar />
+                    </div>
 
-                    <input className='fs-5 ' type="text" placeholder="LastName" {...register("lastName", { required: true, maxLength: 20 })} aria-invalid={errors.lastName ? "true" : "false"} />
-                    {errors.lastName && <p role="alert">Please check last name</p>}
-                    <br />
+                    <div className="col-md-9 col-lg-10 px-md-4 pt-2">
+                        <div className="row">
+                            <div className="col-12 d-flex justify-content-between">
+                                <h1 className="fs-1">Update Customer </h1>
+                                <Button className='btn btn-primary' onClick={()=>{navigate('/admin/customer')}}>Back</Button>
+                            </div>
+                            <div className="col-12 mt-4">
+                                <Form onSubmit={handleSubmit} noValidate>
+                                    <Form.Group className="mb-3" controlId="addCustomer.ControlInput1">
+                                        <Form.Label>FirstName</Form.Label>
+                                        <Form.Control type="text" name="firstName" placeholder="James" value={formValues.firstName} onChange={handleChange} className={formErrors.firstName && "input-error"} />
+                                        {formErrors.firstName && (<span className="error text-danger">{formErrors.firstName}</span>)}
+                                    </Form.Group>
 
-                    <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                        <Form.Control type="email" name="email" id="email" placeholder="name@example.com" value={formValues.email} onChange={handleChange} className={formErrors.email && "input-error"} />
-                        {formErrors.email && ( <span className="error">{formErrors.email}</span> )}
-                    </Form.Group>
+                                    <Form.Group className="mb-3" controlId="addCustomer.ControlInput2">
+                                        <Form.Label>LastName</Form.Label>
+                                        <Form.Control type="text" name="lastName" placeholder="Bond" value={formValues.lastName} onChange={handleChange} className={formErrors.lastName && "input-error"} />
+                                        {formErrors.lastName && (<span className="error text-danger">{formErrors.lastName}</span>)}
+                                    </Form.Group>
 
-                    <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-                        <Form.Label>Email address</Form.Label>
-                        <Form.Control type="email" placeholder="name@example.com" {...register("email", { required: 'Enter your e-mail', pattern: { value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i, message: 'Enter a valid e-mail address' } })} aria-invalid={errors.email ? "true" : "false"} />
-                        {errors.email && <p role="alert">{errors.email.message}</p>}
-                    </Form.Group>
+                                    <Form.Group className="mb-3" controlId="addCustomer.ControlInput3">
+                                        <Form.Label>Email Address</Form.Label>
+                                        <Form.Control type="email" name="email" placeholder="name@example.com" value={formValues.email} onChange={handleChange} className={formErrors.email && "input-error"} />
+                                        {formErrors.email && (<span className="error text-danger">{formErrors.email}</span>)}
+                                    </Form.Group>
 
-                    <input className='fs-5 ' type="text" placeholder='Contact' {...register("contact", { required: true, maxLength: 10 })} aria-invalid={errors.contact ? "true" : "false"} />
-                    {errors.contact?.type === 'required' && <p role="alert">Contact number is required</p>}
-                    <br />
+                                    <Form.Group className="mb-3" controlId="addCustomer.ControlInput4">
+                                        <Form.Label>Contact</Form.Label>
+                                        <Form.Control type="text" name="contact" placeholder="9874563210" value={formValues.contact} onChange={handleChange} className={formErrors.contact && "input-error"} />
+                                        {formErrors.contact && (<span className="error text-danger">{formErrors.contact}</span>)}
+                                    </Form.Group>
 
-                    <input className='fs-5 ' type="text" placeholder="address" {...register("address", { required: true, maxLength: 20 })} aria-invalid={errors.address ? "true" : "false"} />
-                    {errors.address && <p role="alert">Add Address</p>}
-                    <br />
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button type="submit">Submit</Button>
-                </Modal.Footer>
-            </Form>
-        </Modal> */}
+                                    <Form.Group className="mb-3" controlId="addCustomer.ControlInput5">
+                                        <Form.Label>Address</Form.Label>
+                                        <Form.Control type="text" name="address" placeholder="#234, Sector 44A, Chnadigarh - 160047" value={formValues.address} onChange={handleChange} className={formErrors.address && "input-error"} />
+                                        {formErrors.address && (<span className="error text-danger">{formErrors.address}</span>)}
+                                    </Form.Group>
+
+                                    <Button type="submit">Submit</Button>
+                                </Form>
+                                <ToastContainer />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
 
-        {/* Formik  */}
-        <Modal {...props} size="lg" aria-labelledby="addNewCustomer" centered >
-            <Modal.Header closeButton>
-                <Modal.Title id="addNewCustomer">
-                    Update Customer
-                </Modal.Title>
-            </Modal.Header>
-            {Object.keys(formErrors).length === 0 && isSubmitting && (
-                <span className="success-msg">Form submitted successfully</span>
-            )}
-            <Form onSubmit={handleSubmit} noValidate>
-                <Modal.Body>
-                    <Form.Group className="mb-3" controlId="addCustomer.ControlInput1">
-                        <Form.Label>FirstName</Form.Label>
-                        <Form.Control type="text" name="firstName" placeholder="James" value={formValues.firstName} onChange={handleChange} className={formErrors.firstName && "input-error"} />
-                        {formErrors.firstName && ( <span className="error text-danger">{formErrors.firstName}</span> )}
-                    </Form.Group>
-
-                    <Form.Group className="mb-3" controlId="addCustomer.ControlInput2">
-                        <Form.Label>LastName</Form.Label>
-                        <Form.Control type="text" name="lastName" placeholder="Bond" value={formValues.lastName} onChange={handleChange} className={formErrors.lastName && "input-error"} />
-                        {formErrors.lastName && ( <span className="error text-danger">{formErrors.lastName}</span> )}
-                    </Form.Group>
-
-                    <Form.Group className="mb-3" controlId="addCustomer.ControlInput3">
-                        <Form.Label>Email Address</Form.Label>
-                        <Form.Control type="email" name="email" placeholder="name@example.com" value={formValues.email} onChange={handleChange} className={formErrors.email && "input-error"} />
-                        {formErrors.email && ( <span className="error text-danger">{formErrors.email}</span> )}
-                    </Form.Group>
-
-                    <Form.Group className="mb-3" controlId="addCustomer.ControlInput4">
-                        <Form.Label>Contact</Form.Label>
-                        <Form.Control type="text" name="contact" placeholder="9874563210" value={formValues.contact} onChange={handleChange} className={formErrors.contact && "input-error"} />
-                        {formErrors.contact && ( <span className="error text-danger">{formErrors.contact}</span> )}
-                    </Form.Group>
-
-                    <Form.Group className="mb-3" controlId="addCustomer.ControlInput5">
-                        <Form.Label>Address</Form.Label>
-                        <Form.Control type="text" name="address" placeholder="#234, Sector 44A, Chnadigarh - 160047" value={formValues.address} onChange={handleChange} className={formErrors.address && "input-error"} />
-                        {formErrors.address && ( <span className="error text-danger">{formErrors.address}</span> )}
-                    </Form.Group>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button type="submit">Submit</Button>
-                </Modal.Footer>
-            </Form>
-        </Modal>
         </>
     );
 }

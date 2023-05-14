@@ -3,6 +3,7 @@ import React from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle';
 import 'react-toastify/dist/ReactToastify.css';
+import 'reactjs-popup/dist/index.css';
 import './assets/style/style.scss';
 // import Index from "./component/index.jsx";
 // import Login from "./component/login/login";
@@ -24,6 +25,7 @@ import Category from "./component/admin/category"
 import Products from "./component/admin/products"
 import Invoice from "./component/admin/invoice"
 import Reviews from "./component/admin/reviews"
+import UpdateCustomer from "./component/admin/updateCustomer";
 
 function App() {
     return (
@@ -45,6 +47,7 @@ function App() {
                 <Route path="/admin" element={<Dashboard />} />
                 <Route path="/admin/administrator" element={<Administrator />} />
                 <Route path="/admin/customer" element={<Customer />} />
+                <Route path="/admin/customer/update-customer/:customerId" element={<UpdateCustomer />} />
                 <Route path="/admin/category" element={<Category />} />
                 <Route path="/admin/products" element={<Products />} />
                 <Route path="/admin/invoice" element={<Invoice />} />
