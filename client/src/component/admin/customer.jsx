@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { Button } from 'react-bootstrap'
-import {BsPlusCircleFill} from 'react-icons/bs'
+import {BsPlusCircleFill, BsTrash3Fill} from 'react-icons/bs'
+import {FaUserEdit} from 'react-icons/fa'
 
 import {getFormattedDate} from '../../CustomFunctions'
 import Adminnavbar from './adminnavbar'
@@ -68,25 +70,26 @@ const Customer = () => {
                                             <th scope="col">contact</th>
                                             <th scope="col">address</th>
                                             <th scope="col">createdOn</th>
-                                            <th scope="col">status</th>
                                             <th scope="col">actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {
-                                            customerObject.map((i) => {
+                                            customerObject.map((i,j) => {
                                                 return (
                                                     <>
                                                         <tr key={i._id}>
-                                                            <th scope="row">{i._id}</th>
+                                                            <th scope="row">{j+1}</th>
                                                             <td>{i.firstName}</td>
                                                             <td>{i.lastName}</td>
                                                             <td>{i.email}</td>
                                                             <td>{i.contact}</td>
                                                             <td>{i.address}</td>
                                                             <td>{getFormattedDate(i.createdOn)}</td>
-                                                            <td>{i.status}</td>
-                                                            <td>{i.actions}</td>
+                                                            <td>
+                                                                <Link to="" className='ms-2'><FaUserEdit /></Link>
+                                                                <Link to="" className='ms-2'><BsTrash3Fill /></Link>
+                                                            </td>
                                                         </tr>
                                                     </>
                                                 )
